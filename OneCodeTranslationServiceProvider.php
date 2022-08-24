@@ -53,9 +53,7 @@ class OneCodeTranslationServiceProvider extends ServiceProvider
     {
         $translationDriver = config('translation.driver', GoogleTranslateDriver::class);
 
-        if ($translationDriver === GoogleTranslateDriver::class
-            && class_exists(\JoggApp\GoogleTranslate\GoogleTranslate::class)
-        ) {
+        if ($translationDriver === GoogleTranslateDriver::class) {
             $this->app->bind(TranslationDriver::class,
                 fn() => new GoogleTranslateDriver(
                     $this->app->make(\JoggApp\GoogleTranslate\GoogleTranslate::class)
