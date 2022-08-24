@@ -1,0 +1,23 @@
+{
+    "name": "onecode-no/translation",
+    "description": "Translation support for Laravel/Inertia Applications",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "OneCode\\Translation\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "onecode-no",
+            "email": "post@onecode.no"
+        }
+    ],
+    "require": {
+        "illuminate/support": "^9.26"
+    },
+    "require-dev": {
+        "joggapp/laravel-google-translate": "^8.1"
+    }
+}
