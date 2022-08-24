@@ -15,9 +15,7 @@
         }
     ],
     "require": {
-        "illuminate/support": "^9.26"
-    },
-    "require-dev": {
+        "illuminate/support": "^9.26",
         "joggapp/laravel-google-translate": "^8.1"
     }
 }
