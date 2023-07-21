@@ -3,10 +3,14 @@
 namespace OneCode\Translation;
 
 use App\Console\Commands\GenerateTranslationFilesCommand;
+use Illuminate\Support\Env;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 use OneCode\Translation\Console\Commands\Translation\GenerateSingleTranslationFileCommand;
 use OneCode\Translation\Contracts\TranslationDriver;
 use OneCode\Translation\Lib\Drivers\GoogleTranslateDriver;
+use OneCode\Translation\Lib\Drivers\OpenAIDriver;
+use OneCode\Translation\Lib\TranslationDriverFactory;
 
 class OneCodeTranslationServiceProvider extends ServiceProvider
 {
@@ -17,7 +21,7 @@ class OneCodeTranslationServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->registerTranslationDriver();
+
     }
 
     /**
@@ -27,11 +31,11 @@ class OneCodeTranslationServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->registerTranslationDriver();
         if ($this->app->runningInConsole()) {
             $this->registerCommands();
+            $this->publishConfigurationFiles();
         }
-
-        $this->publishConfigurationFiles();
     }
 
     private function registerCommands(): void
@@ -51,15 +55,27 @@ class OneCodeTranslationServiceProvider extends ServiceProvider
 
     private function registerTranslationDriver(): void
     {
-        $translationDriver = config('translation.driver', GoogleTranslateDriver::class);
+        $this->app->bind(
+            GoogleTranslateDriver::class,
+            fn() => new GoogleTranslateDriver(
+                googleTranslate: $this->app->make(
+                    \JoggApp\GoogleTranslate\GoogleTranslate::class,
+                )
+            )
+        );
 
-        if ($translationDriver === GoogleTranslateDriver::class) {
-            $this->app->bind(TranslationDriver::class,
-                fn() => new GoogleTranslateDriver(
-                    $this->app->make(\JoggApp\GoogleTranslate\GoogleTranslate::class)
-                ));
-        } else {
-            $this->app->bind(TranslationDriver::class, fn() => $this->app->make());
-        }
+        $this->app->bind(
+            OpenAIDriver::class,
+            fn() => new OpenAIDriver(
+                Env::get('OPENAI_API_KEY')
+            )
+        );
+
+        $this->app->singleton(
+            TranslationDriver::class,
+            fn() => $this->app->make(
+                Config::get('translation.driver', GoogleTranslateDriver::class),
+            ),
+        );
     }
 }

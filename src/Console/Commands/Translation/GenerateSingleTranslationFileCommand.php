@@ -6,6 +6,8 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use OneCode\Translation\Contracts\TranslationDriver;
+use OneCode\Translation\Lib\Drivers\GoogleTranslateDriver;
+use OneCode\Translation\Lib\Drivers\OpenAIDriver;
 
 class GenerateSingleTranslationFileCommand extends Command
 {
@@ -14,7 +16,7 @@ class GenerateSingleTranslationFileCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'translate:single {source=en_US} {destination=nb_NO} {path=_use_default}';
+    protected $signature = 'translate:single {source=en_US} {destination=nb_NO} {path=_use_default} {driver=google}';
 
     /**
      * The console command description.
@@ -22,7 +24,7 @@ class GenerateSingleTranslationFileCommand extends Command
      * @var string
      */
     protected $description = 'Generate language files and updates translations';
-    private string|null $localeFilePath = null;
+    private ?string $localeFilePath = null;
 
     /**
      * Execute the console command.
@@ -31,11 +33,17 @@ class GenerateSingleTranslationFileCommand extends Command
      */
     public function handle()
     {
-        $targets = config('commands.locale.mapping', []);
+        $targets = config('translation.locales.mapping', []);
 
         $sourceLocale = $this->argument('source');
         $destinationLocale = $this->argument('destination');
         $sourcePath = $this->argument('path');
+        $driverName = $this->argument('driver');
+
+        $driver = match (strtolower($driverName)){
+            'google'=> GoogleTranslateDriver::class,
+            'openai', 'chatgpt'=> OpenAIDriver::class,
+        };
 
         if ($sourcePath === '_use_default') {
             $this->localeFilePath = resource_path('lang/%s.json');
@@ -57,7 +65,8 @@ class GenerateSingleTranslationFileCommand extends Command
         $translated = $this->createTranslation(
             $targets[$sourceLocale],
             $targets[$destinationLocale],
-            $this->languageFilePath($sourceLocale)
+            $this->languageFilePath($sourceLocale),
+            $driver,
         );
 
         File::put($this->languageFilePath($destinationLocale), json_encode($translated, JSON_PRETTY_PRINT));
@@ -72,10 +81,10 @@ class GenerateSingleTranslationFileCommand extends Command
         return 0;
     }
 
-    protected function createTranslation(string $source, string $target, string $file): array
+    protected function createTranslation(string $source, string $target, string $file, string $driver): array
     {
-        /** @var TranslationDriver $translator */
-        $translator = app(TranslationDriver::class);
+        /** @var TranslationDriver|OpenAIDriver|GoogleTranslateDriver $translator */
+        $translator = app($driver);
         $keys = Arr::dot(json_decode(File::get($file), true));
         $output = [];
 

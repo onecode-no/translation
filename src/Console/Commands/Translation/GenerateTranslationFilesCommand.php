@@ -38,7 +38,7 @@ class GenerateTranslationFilesCommand extends Command
     {
         $locale = App::currentLocale();
 
-        $targets = config('commands.locale.mapping', []);
+        $targets = config('translation.locales.mapping', []);
 
         foreach ($targets as $targetLocale => $target) {
             Artisan::call(GenerateSingleTranslationFileCommand::class, [

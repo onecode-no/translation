@@ -8,6 +8,11 @@
             "OneCode\\Translation\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "OneCode\\Translation\\Tests\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "onecode-no",
@@ -15,8 +20,20 @@
         }
     ],
     "require": {
-        "php": "^7.4",
+        "php": "^8.1",
         "illuminate/support": "^9.26",
         "joggapp/laravel-google-translate": "^8.1"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.0",
+        "phpunit/phpunit": "^9.0",
+        "pestphp/pest": "^1.22",
+        "pestphp/pest-plugin-laravel": "^1.3",
+        "orchestra/testbench": "^7.10"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }

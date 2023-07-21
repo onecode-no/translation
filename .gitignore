@@ -2,3 +2,7 @@ vendor/
 node_modules/
 *.DS_Store
 *.tmp
+*.cache
+.idea
+composer.lock
+.env

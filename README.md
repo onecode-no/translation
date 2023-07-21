@@ -1,5 +1,5 @@
 # translation
-
+>For internal use, feel free to use if it fits your needs.
 
 ## Installing
 ```bash
