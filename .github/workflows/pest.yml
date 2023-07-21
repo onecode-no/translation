@@ -18,3 +18,5 @@ jobs:
         run: composer install --dev --no-ansi -q
       - name: Execute Feature tests via Pest
         run: vendor/bin/pest
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
