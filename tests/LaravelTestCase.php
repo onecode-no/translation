@@ -10,8 +10,8 @@ class LaravelTestCase extends Orchestra
 {
     protected function setUp(): void
     {
-        $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
-        $dotenv->load();
+//        $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
+//        $dotenv->load();
         parent::setUp();
 //
     }
