@@ -4,38 +4,37 @@ use OneCode\Translation\Contracts\TranslationDriver;
 use OneCode\Translation\Lib\Drivers\OpenAIDriver;
 
 
-
 it('can load any driver', function () {
     $driver = new class implements TranslationDriver {
         static array $messages = [
-            '1337' => [
-                'foo'=> [
-                    '7331'=> 'bar',
+            'en' => [
+                'foo' => [
+                    'joke' => 'bar',
                 ]
             ]
         ];
 
         public function translate(string $value, string $source, string $target): ?string
         {
-           return static::$messages[$source][$value][$target] ??null;
+            return static::$messages[$source][$value][$target] ?? null;
         }
     };
 
-    app()->bind(TranslationDriver::class, fn()=>$driver);
+    app()->singleton(TranslationDriver::class, fn() => $driver);
 
-    $translated = app(TranslationDriver::class)->translate('foo', '1337', '7331');
+    $translated = app(TranslationDriver::class)->translate('foo', 'en', 'joke');
 
     expect($translated)->toBe('bar');
 });
 
 it('translates using OpenAI', function () {
+    /** @var OpenAIDriver $driver */
     $driver = app(OpenAIDriver::class);
-    $translated = $driver->translate('Hello, my name is Peter. Do you know where i can find New York?', 'en', 'no');
+    $translated = $driver->translate('Hello, my name is Peter.', 'en', 'no');
 
-    print_r($translated);
 
     expect($translated)->toBeString();
-    expect($translated)->toBe('Hei, navnet mitt er Peter. Vet du hvor jeg kan finne New York?');
+    expect($translated)->toBe('Hei, navnet mitt er Peter.');
 });
 
 //it('translates using Google Translate', function() {
