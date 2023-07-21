@@ -5,8 +5,5 @@ up-and-build-container:
 composer-install:
 	docker exec -it $(container_name) composer install
 
-cli:
-	docker exec -it $(container_name) php src/cli.php
-
 test:
 	docker exec -it $(container_name) vendor/bin/pest
