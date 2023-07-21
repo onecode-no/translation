@@ -10,7 +10,6 @@ use OneCode\Translation\Console\Commands\Translation\GenerateSingleTranslationFi
 use OneCode\Translation\Contracts\TranslationDriver;
 use OneCode\Translation\Lib\Drivers\GoogleTranslateDriver;
 use OneCode\Translation\Lib\Drivers\OpenAIDriver;
-use OneCode\Translation\Lib\TranslationDriverFactory;
 
 class OneCodeTranslationServiceProvider extends ServiceProvider
 {
